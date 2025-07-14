@@ -5,6 +5,3 @@ Polymacs aims to be fast, scalable, future-proof, and modular, providing a robus
 
 ## Current state
 The package is currently in an totally unstable and incomplete state, with core functionalities still under development.
-
-## License
-Copyright © P.M and contributors. Distributed under the GNU General Public License, Version 3.
