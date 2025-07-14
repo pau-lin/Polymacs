@@ -6,3 +6,6 @@ Polymacs aims to be fast, scalable, future-proof, and modular, providing a robus
 ## Current state
 The package is currently in an totally unstable and incomplete state, with core functionalities still under development.
 For now, we rely on Python and other external tools to implement certain features more easily, with the goal of replacing them later with pure Emacs Lisp.
+
+This project is also, for me, a way to discover Lisp and Emacs Lisp in a very hands-on way — making mistakes, approximations, and plenty of misconceptions.  
+Reassuring, isn’t it?
