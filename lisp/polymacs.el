@@ -38,6 +38,17 @@
 
 ;;; Code:
 
+(provide 'polymacs)
+
+(defcustom polymacs-resources-directory (expand-file-name "~/polymacs-resources/")
+  "Default path to Polymacs resource files."
+  :type 'directory
+  :group 'polymacs)
+
+(defconst polymacs-pkg-directory
+  (file-name-directory (or load-file-name buffer-file-name))
+  "Path to Polymacs source code.")
+
 (defvar polymacs--hidden-overlays '()
   "List of overlays currently hiding text.")
 
@@ -108,7 +119,7 @@ Does not affect existing overlays."
 (defun polymacs--maybe-enable-mode ()
   "Active `polymacs-mode` si le fichier courant est dans `polymacs-source-folder`."
   (when (and buffer-file-name
-             (string-prefix-p (expand-file-name polymacs-source-folder)
+             (string-prefix-p (expand-file-name polymacs-resources-directory)
                               (expand-file-name buffer-file-name)))
     (polymacs-mode 1)))
 
@@ -177,15 +188,15 @@ mais aucun de niveau 1 (i.e. aucune ligne ne commence par '* ')."
 	(doc (make-polymacs-source
               :title title
               :url url
-              :file-path (concat polymacs-source-folder (format-time-string "%Y%m%d%H%M%S-") title".org"))))
+              :file-path (concat polymacs-resources-directory (format-time-string "%Y%m%d%H%M%S-") title".org"))))
 	 (setq polymacs--last-document doc)
       (with-current-buffer org-buffer
 	(erase-buffer))
       (with-current-buffer html-buffer
 	(insert html)
       (if (string-match-p "wikipedia.org" url)
-	  (call-process-region (point-min) (point-max) "../env/bin/python3" nil bs4-buffer nil "../scripts/parse_bs4_wiki.py" url)
-	 (call-process-region (point-min) (point-max) "../env/bin/python3" nil bs4-buffer nil "../scripts/parse_bs4.py" url))
+	  (call-process-region (point-min) (point-max) (expand-file-name "../env/bin/python3" polymacs-pkg-directory) nil bs4-buffer nil (expand-file-name "../scripts/parse_bs4_wiki.py" polymacs-pkg-directory) url)
+	  (call-process-region (point-min) (point-max) (expand-file-name "../env/bin/python3" polymacs-pkg-directory) nil bs4-buffer nil (expand-file-name "../scripts/parse_bs4.py" polymacs-pkg-directory) url))
       (kill-buffer html-buffer))
     (with-current-buffer bs4-buffer
       (call-process-region (point-min) (point-max) "pandoc" nil org-buffer nil "--wrap=none" "-f" "html" "-t" "org")
