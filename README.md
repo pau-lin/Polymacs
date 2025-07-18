@@ -10,14 +10,17 @@ For now, we rely on Python and other external tools to implement certain feature
 This project is also, for me, a way to discover Lisp and Emacs Lisp in a very hands-on way — making mistakes, approximations, and plenty of misconceptions.  
 Reassuring, isn’t it?
 
-## Install and load module
-Simply clone this github repo and add to your init file (default to ~/.emacs.d/init.el or .config/emacs/init.el) :
+## Installation
+- Clone this github repo and add to your init file (default to ~/.emacs.d/init.el or .config/emacs/init.el) :
 ```
 (add-to-list 'load-path "path-to-polymacs-pkg/lisp/")
 (require 'polymacs)
 ```
 
+- You need to create a python venv named env in "path-to-polymacs-pkg" (`python -m venv env`) and install BeautifulSoup4 (`pip install beautifulsoup4`).
+
+- Install pandoc on your system
+
 ## Config
-To set the path to the resources-directory (directory in which we save learning materials like web-pages converted to org-mode):
-(setq polymacs-source-folder "~/polymacs-resources/")
+To set the path to the resources-directory (directory in which we save learning materials like web-pages converted to org-mode): (setq polymacs-source-folder "~/polymacs-resources/")<br>
 Default is ~/polymacs-resources, you will be asked to create it when saving your first source.
