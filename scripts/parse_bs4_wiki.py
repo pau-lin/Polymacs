@@ -9,6 +9,10 @@ def clean_html(html, base_url):
     for script_or_style in soup(['script', 'style']):
         script_or_style.decompose()
 
+    # Supprimer les balises avec la classe mw-editsection
+    for edit_section in soup.select('.mw-editsection'):
+        edit_section.decompose()
+
     # Supprimer les commentaires
     for comment in soup.find_all(string=lambda text: isinstance(text, Comment)):
         comment.extract()
@@ -20,6 +24,7 @@ def clean_html(html, base_url):
             if attr not in ['href', 'src', 'alt', 'title']:
                 del tag.attrs[attr]
 
+    # Corriger les URLs relatives pour href et src
     for tag in soup.find_all(True):
         if 'href' in tag.attrs:
             tag['href'] = urljoin(base_url, tag['href'])

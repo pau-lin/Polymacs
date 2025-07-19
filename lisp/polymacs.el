@@ -109,13 +109,42 @@
 	(org-do-promote))
       (deactivate-mark)
       (polymacs--remove-empty-org-targets)
-      (polymacs--align-all-org-tables)
       (polymacs--fix-org-duplicate-http-links)
       (polymacs--remove-caption-string)
+      (polymacs--remove-nbsp)
+      (polymacs--clean-org-superscript)
+      (polymacs--fix-ref-link)
+      (polymacs--align-all-org-tables)
       (switch-to-buffer (current-buffer)))
       (org-mode))))
 
 ;;;; Tool parsing functions
+(defun polymacs--clean-org-superscript ()
+  "Remove ^{...} markup."
+  (save-excursion
+    (goto-char (point-min))
+
+    (while (re-search-forward "\\^\\({\\([^}]+\\)}\\)" nil t)
+      (replace-match "\\2"))))
+
+(defun polymacs--fix-ref-link ()
+  "Fix Ref link."
+  (save-excursion
+    (goto-char (point-min))
+    
+    (while (re-search-forward
+            "\\[\\[\\(https?://[^]]+\\)\\]\\[\\[\\([0-9]+\\)\\]\\]\\]" nil t)
+      (let ((url (match-string 1))
+            (num (match-string 2)))
+        (replace-match (format "[[%s][(%s)]]" url num) t t)))))
+
+(defun polymacs--remove-nbsp ()
+  "Remove all NO-BREAK SPACE (U+00A0) characters from the current buffer."
+  (save-excursion
+    (goto-char (point-min))
+    (while (search-forward "\u00A0" nil t)
+      (replace-match " "))))
+
 (defun polymacs--remove-caption-string ()
   "Remove '#+caption' string in resource buffer to correctly display org links"
   (save-excursion
@@ -131,7 +160,7 @@
             "\\[\\[\\(https?://[^]]+\\)\\]\\[\\[\\[\\(https?://[^]]+\\)\\]\\]\\]\\]" nil t)
       (let ((url1 (match-string 1))
             (url2 (match-string 2)))
-        (replace-match (format "[[%s]]" url2) t t)))))
+        (replace-match (format "[[%s][image]]" url2) t t)))))
 
 (defun polymacs--extract-html-title (html)
   "Extract html title from a html string."

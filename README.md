@@ -46,7 +46,7 @@ To allow remote images to be shown in the resource buffer, you need to install [
 Then you can use M-x "org-toggle-inline-images" to show them.<br>
 It will quite noticeably slow down loading of an org-bfile containing remote images
 
-I plan to include this feature by default in Polymacs
+I plan to include this feature by default in Polymacs.
 ## Config
 To set the path to the resources-directory (directory in which we save learning materials like web-pages converted to org-mode): (setq polymacs-resource-folder "~/polymacs-resources/")<br>
 Default is ~/polymacs-resources, you will be asked to create it when saving your first resource.
