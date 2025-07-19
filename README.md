@@ -22,5 +22,5 @@ Reassuring, isn’t it?
 - Install pandoc on your system
 
 ## Config
-To set the path to the resources-directory (directory in which we save learning materials like web-pages converted to org-mode): (setq polymacs-source-folder "~/polymacs-resources/")<br>
-Default is ~/polymacs-resources, you will be asked to create it when saving your first source.
+To set the path to the resources-directory (directory in which we save learning materials like web-pages converted to org-mode): (setq polymacs-resource-folder "~/polymacs-resources/")<br>
+Default is ~/polymacs-resources, you will be asked to create it when saving your first resource.

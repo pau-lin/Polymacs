@@ -40,8 +40,17 @@
 
 (provide 'polymacs)
 
+(require 'polymacs-resource)
+(require 'polymacs-mode)
+
+(defgroup polymacs nil
+  "Incremental learning for self-study"
+  :group 'applications
+  :prefix "polymacs-"
+  :link '(url-link :tag "Github" "https://github.com/pau-lin/polymacs"))
+
 (defcustom polymacs-resources-directory (expand-file-name "~/polymacs-resources/")
-  "Default path to Polymacs resource files."
+  "Path to directory containing polymacs resource files."
   :type 'directory
   :group 'polymacs)
 
@@ -49,81 +58,63 @@
   (file-name-directory (or load-file-name buffer-file-name))
   "Path to Polymacs source code.")
 
-(defvar polymacs--hidden-overlays '()
-  "List of overlays currently hiding text.")
+;; (defvar polymacs--hidden-overlays '()
+;;   "List of overlays currently hiding text.")
 
-(defun polymacs--wrap-region-with-markers (start end)
-  "Insert `{{` and `}}` around region from START to END.
-Returns new START and END positions (excluding the markers)."
-  (save-excursion
-    (goto-char end)
-    (insert "}=")
-    (goto-char start)
-    (insert "={"))
-  (list (+ start 2) (+ end 2)))
+;; (defun polymacs--wrap-region-with-markers (start end)
+;;   "Insert `{{` and `}}` around region from START to END.
+;; Returns new START and END positions (excluding the markers)."
+;;   (save-excursion
+;;     (goto-char end)
+;;     (insert "}=")
+;;     (goto-char start)
+;;     (insert "={"))
+;;   (list (+ start 2) (+ end 2)))
 
-(defun polymacs-hide-region (start end &optional placeholder)
-  "Hide region between START and END with PLACEHOLDER and wrap in {{...}} markers."
-  (interactive "r")
-  (let* ((ph (or placeholder "..."))
-         (new-pos (polymacs--wrap-region-with-markers start end))
-         (s (nth 0 new-pos))
-         (e (nth 1 new-pos))
-         (ov (make-overlay s e)))
-    (overlay-put ov 'invisible t)
-    (overlay-put ov 'display ph)
-    (overlay-put ov 'polymacs-hidden t)
-    (overlay-put ov 'modification-hooks
-                 (list (lambda (o &rest _) (delete-overlay o))))
-    (push ov polymacs--hidden-overlays)
-    (message "Text hidden")))
+;; (defun polymacs-hide-region (start end &optional placeholder)
+;;   "Hide region between START and END with PLACEHOLDER and wrap in {{...}} markers."
+;;   (interactive "r")
+;;   (let* ((ph (or placeholder "..."))
+;;          (new-pos (polymacs--wrap-region-with-markers start end))
+;;          (s (nth 0 new-pos))
+;;          (e (nth 1 new-pos))
+;;          (ov (make-overlay s e)))
+;;     (overlay-put ov 'invisible t)
+;;     (overlay-put ov 'display ph)
+;;     (overlay-put ov 'polymacs-hidden t)
+;;     (overlay-put ov 'modification-hooks
+;;                  (list (lambda (o &rest _) (delete-overlay o))))
+;;     (push ov polymacs--hidden-overlays)
+;;     (message "Text hidden")))
 
-(defun polymacs-show-all-hidden ()
-  "Remove all overlays hiding text, leaving the {{...}} markers intact."
-  (interactive)
-  (dolist (ov polymacs--hidden-overlays)
-    (when (overlay-get ov 'polymacs-hidden)
-      (delete-overlay ov)))
-  (setq polymacs--hidden-overlays nil)
-  (message "All hidden text revealed"))
+;; (defun polymacs-show-all-hidden ()
+;;   "Remove all overlays hiding text, leaving the {{...}} markers intact."
+;;   (interactive)
+;;   (dolist (ov polymacs--hidden-overlays)
+;;     (when (overlay-get ov 'polymacs-hidden)
+;;       (delete-overlay ov)))
+;;   (setq polymacs--hidden-overlays nil)
+;;   (message "All hidden text revealed"))
 
-(defun polymacs-hide-all-marked-regions (&optional placeholder)
-  "Scan buffer for `{{...}}` blocks and apply hiding overlays.
-Does not affect existing overlays."
-  (interactive)
-  (let ((ph (or placeholder "...")))
-    (save-excursion
-      (goto-char (point-min))
-      (while (search-forward "={" nil t)
-        (let ((start (point)))
-          (when (search-forward "}=" nil t)
-            (let* ((end (- (point) 2)) ;; exclude "}}"
-                   (ov (make-overlay start end)))
-              (overlay-put ov 'invisible t)
-              (overlay-put ov 'display ph)
-              (overlay-put ov 'polymacs-hidden t)
-              (overlay-put ov 'modification-hooks
-                           (list (lambda (o &rest _) (delete-overlay o))))
-              (push ov polymacs--hidden-overlays)))))))
-  (message "All blocks hidden"))
-
-(cl-defstruct polymacs-source
-  title
-  url
-  file-path)
-
-(define-minor-mode polymacs-mode
-  "Mode mineur pour activer les fonctions Polymacs spécifiques."
-  :lighter " Poly")
-
-(defun polymacs--maybe-enable-mode ()
-  "Active `polymacs-mode` si le fichier courant est dans `polymacs-source-folder`."
-  (when (and buffer-file-name
-             (string-prefix-p (expand-file-name polymacs-resources-directory)
-                              (expand-file-name buffer-file-name)))
-    (polymacs-mode 1)))
-
-(add-hook 'find-file-hook #'polymacs--maybe-enable-mode)
+;; (defun polymacs-hide-all-marked-regions (&optional placeholder)
+;;   "Scan buffer for `{{...}}` blocks and apply hiding overlays.
+;; Does not affect existing overlays."
+;;   (interactive)
+;;   (let ((ph (or placeholder "...")))
+;;     (save-excursion
+;;       (goto-char (point-min))
+;;       (while (search-forward "={" nil t)
+;;         (let ((start (point)))
+;;           (when (search-forward "}=" nil t)
+;;             (let* ((end (- (point) 2)) ;; exclude "}}"
+;;                    (ov (make-overlay start end)))
+;;               (overlay-put ov 'invisible t)
+;;               (overlay-put ov 'display ph)
+;;               (overlay-put ov 'polymacs-hidden t)
+;;               (overlay-put ov 'modification-hooks
+;;                            (list (lambda (o &rest _) (delete-overlay o))))
+;;               (push ov polymacs--hidden-overlays)))))))
+;;   (message "All blocks hidden"))
 
 (defun polymacs--extract-html-title (html)
     (when (string-match "<title>\\(.*?\\)</title>" html)
@@ -185,7 +176,7 @@ mais aucun de niveau 1 (i.e. aucune ligne ne commence par '* ')."
 	(org-buffer (get-buffer-create "*polymacs-org*"))
         (html (buffer-substring-no-properties (point) (point-max)))
         (title (org-roam-node-slug (org-roam-node-create :title (polymacs--extract-html-title html))))
-	(doc (make-polymacs-source
+	(doc (make-polymacs-resource
               :title title
               :url url
               :file-path (concat polymacs-resources-directory (format-time-string "%Y%m%d%H%M%S-") title".org"))))
@@ -235,9 +226,4 @@ mais aucun de niveau 1 (i.e. aucune ligne ne commence par '* ')."
   (interactive
    (unless polymacs-mode
      (user-error "This command is only available when `polymacs-mode` is active")))
-  (browse-url (polymacs-source-url polymacs--last-document)))
-
-(defun polymacs-register-source ()
-  "Register selected buffer as source-file for polymacs : add it to the db and gain access to polymacs functionnalities"
-  (interactive)
-  (write-file (polymacs-source-file-path polymacs--last-document)))
+  (browse-url (polymacs-resource-url polymacs--last-document)))
