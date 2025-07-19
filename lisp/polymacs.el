@@ -38,11 +38,10 @@
 
 ;;; Code:
 
-(provide 'polymacs)
-
 (require 'polymacs-resource)
 (require 'polymacs-mode)
 
+;;; Options
 (defgroup polymacs nil
   "Incremental learning for self-study"
   :group 'applications
@@ -54,122 +53,29 @@
   :type 'directory
   :group 'polymacs)
 
+;;; Variables
 (defconst polymacs-pkg-directory
   (file-name-directory (or load-file-name buffer-file-name))
   "Path to Polymacs source code.")
 
-;; (defvar polymacs--hidden-overlays '()
-;;   "List of overlays currently hiding text.")
+;;; Parsing functions
+(defun polymacs-html-to-org (url)
+  "Parse a html page to org format."
+  (interactive "sURL: ")
+  (url-retrieve url #'polymacs-html-to-org--callback (list url)))
 
-;; (defun polymacs--wrap-region-with-markers (start end)
-;;   "Insert `{{` and `}}` around region from START to END.
-;; Returns new START and END positions (excluding the markers)."
-;;   (save-excursion
-;;     (goto-char end)
-;;     (insert "}=")
-;;     (goto-char start)
-;;     (insert "={"))
-;;   (list (+ start 2) (+ end 2)))
-
-;; (defun polymacs-hide-region (start end &optional placeholder)
-;;   "Hide region between START and END with PLACEHOLDER and wrap in {{...}} markers."
-;;   (interactive "r")
-;;   (let* ((ph (or placeholder "..."))
-;;          (new-pos (polymacs--wrap-region-with-markers start end))
-;;          (s (nth 0 new-pos))
-;;          (e (nth 1 new-pos))
-;;          (ov (make-overlay s e)))
-;;     (overlay-put ov 'invisible t)
-;;     (overlay-put ov 'display ph)
-;;     (overlay-put ov 'polymacs-hidden t)
-;;     (overlay-put ov 'modification-hooks
-;;                  (list (lambda (o &rest _) (delete-overlay o))))
-;;     (push ov polymacs--hidden-overlays)
-;;     (message "Text hidden")))
-
-;; (defun polymacs-show-all-hidden ()
-;;   "Remove all overlays hiding text, leaving the {{...}} markers intact."
-;;   (interactive)
-;;   (dolist (ov polymacs--hidden-overlays)
-;;     (when (overlay-get ov 'polymacs-hidden)
-;;       (delete-overlay ov)))
-;;   (setq polymacs--hidden-overlays nil)
-;;   (message "All hidden text revealed"))
-
-;; (defun polymacs-hide-all-marked-regions (&optional placeholder)
-;;   "Scan buffer for `{{...}}` blocks and apply hiding overlays.
-;; Does not affect existing overlays."
-;;   (interactive)
-;;   (let ((ph (or placeholder "...")))
-;;     (save-excursion
-;;       (goto-char (point-min))
-;;       (while (search-forward "={" nil t)
-;;         (let ((start (point)))
-;;           (when (search-forward "}=" nil t)
-;;             (let* ((end (- (point) 2)) ;; exclude "}}"
-;;                    (ov (make-overlay start end)))
-;;               (overlay-put ov 'invisible t)
-;;               (overlay-put ov 'display ph)
-;;               (overlay-put ov 'polymacs-hidden t)
-;;               (overlay-put ov 'modification-hooks
-;;                            (list (lambda (o &rest _) (delete-overlay o))))
-;;               (push ov polymacs--hidden-overlays)))))))
-;;   (message "All blocks hidden"))
-
-(defun polymacs--extract-html-title (html)
-    (when (string-match "<title>\\(.*?\\)</title>" html)
-    (let ((raw-title (match-string 1 html)))
-      (string-trim raw-title))))
-
-(defun polymacs-region-contains-non-top-level-headings-p ()
-  "Retourne t si la région active contient des headings Org,
-mais aucun de niveau 1 (i.e. aucune ligne ne commence par '* ')."
-  (if (use-region-p)
-      (save-excursion
-        (let ((start (region-beginning))
-              (end (region-end))
-              (found-heading nil)
-              (has-top-level nil))
-          ;; Positionner un caractère avant la région pour capturer le heading de la 1ère ligne
-          (goto-char (max (point-min) (1- start)))
-          (while (re-search-forward "^\\*+ " end t)
-            (setq found-heading t)
-            (when (save-excursion
-                    (beginning-of-line)
-                    (looking-at "^\\* "))
-              (setq has-top-level t)))
-          (and found-heading (not has-top-level))))
-    nil))
-
-(defun polymacs-remove-empty-org-targets ()
-  "Supprime toutes les occurrences de <<>> dans le buffer actuel."
-  (save-excursion
-    (goto-char (point-min))
-    (while (search-forward "<<>>" nil t)
-      (replace-match "" nil t))))
-
-(defun polymacs-align-all-org-tables ()
-  "Aligne chaque tableau du buffer une seule fois, de façon sécurisée."
-  (save-excursion
-    (goto-char (point-min))
-    (with-silent-modifications
-      (let ((in-table nil))
-        (while (not (eobp))
-          (let ((line (thing-at-point 'line t)))
-            (cond
-             ;; Ligne de tableau
-             ((string-match-p "^\\s-*|" line)
-              (unless in-table
-                (when (org-at-table-p)
-                  (ignore-errors (org-table-align)))
-                (setq in-table t)))
-             ;; Ligne vide ou pas un tableau → on reset l'état
-             (t (setq in-table nil))))
-          (forward-line 1))))))
+(defun polymacs-html-to-org-at-point ()
+  "Call `polymacs-html-to-org` with http/https link at point"
+  (interactive)
+  (let ((url (or (org-element-property :raw-link (org-element-context))
+                 (thing-at-point 'url))))
+    (if (and url (string-match-p "^http?://" url))
+      (polymacs-html-to-org url)
+      (message "No valid link at point."))))
 
 (defun polymacs-html-to-org--callback (status url)
   (goto-char (point-min))
-  (re-search-forward "^$" nil 'move) ;; Trouve la ligne vide après les headers
+  (re-search-forward "^$" nil 'move) ;; Remove headers
   (forward-char)
     (let* ((html-buffer (generate-new-buffer "*html*"))
 	(bs4-buffer "*bs4*")
@@ -199,31 +105,71 @@ mais aucun de niveau 1 (i.e. aucune ligne ne commence par '* ')."
       (org-delete-property-globally "CUSTOM_ID")
       (goto-char (point-min))
       (push-mark (point-max) nil t)
-      (when (polymacs-region-contains-non-top-level-headings-p) 
+      (while (polymacs--region-contains-non-top-level-headings-p) 
 	(org-do-promote))
       (deactivate-mark)
-      (polymacs-remove-empty-org-targets)
-      (polymacs-align-all-org-tables)
+      (polymacs--remove-empty-org-targets)
+      (polymacs--align-all-org-tables)
       (switch-to-buffer (current-buffer)))
       (org-mode))))
 
-(defun polymacs-html-to-org (url)
-  "Parse a html page to org format."
-  (interactive "sURL: ")
-  (url-retrieve url #'polymacs-html-to-org--callback (list url)))
+;;;; Tool parsing functions
+(defun polymacs--extract-html-title (html)
+  "Extract html title from a html string."
+    (when (string-match "<title>\\(.*?\\)</title>" html)
+    (let ((raw-title (match-string 1 html)))
+      (string-trim raw-title))))
 
-(defun polymacs-html-to-org-at-point ()
-  "Appelle `polymacs-html-to-org` avec le lien à point, s’il y en a un."
-  (interactive)
-  (let ((url (or (org-element-property :raw-link (org-element-context))
-                 (thing-at-point 'url))))
-    (if (and url (string-match-p "^https?://" url))
-        (polymacs-html-to-org url)
-      (message "Aucun lien valide à point."))))
+(defun polymacs--region-contains-non-top-level-headings-p ()
+  "Return t if marked region contains org headings but not of level 1."
+  (if (use-region-p)
+      (save-excursion
+        (let ((start (region-beginning))
+              (end (region-end))
+              (found-heading nil)
+              (has-top-level nil))
+          (goto-char (max (point-min) (1- start)))
+          (while (re-search-forward "^\\*+ " end t)
+            (setq found-heading t)
+            (when (save-excursion
+                    (beginning-of-line)
+                    (looking-at "^\\* "))
+              (setq has-top-level t)))
+          (and found-heading (not has-top-level))))
+    nil))
 
+(defun polymacs--remove-empty-org-targets ()
+  "Delete all <<>> occurences in current buffer."
+  (save-excursion
+    (goto-char (point-min))
+    (while (search-forward "<<>>" nil t)
+      (replace-match "" nil t))))
+
+(defun polymacs--align-all-org-tables ()
+  "Align and repair all Org tables."
+  (save-excursion
+    (goto-char (point-min))
+    (with-silent-modifications
+      (let ((in-table nil))
+        (while (not (eobp))
+          (let ((line (thing-at-point 'line t)))
+            (cond
+             ((string-match-p "^\\s-*|" line)
+              (unless in-table
+                (when (org-at-table-p)
+                  (ignore-errors (org-table-align)))
+                (setq in-table t)))
+             (t (setq in-table nil))))
+          (forward-line 1))))))
+
+;;; Navigation
 (defun polymacs-browse-current-buffer ()
-  "Ouvre l’URL associée au document courant dans un navigateur."
-  (interactive
+  "Open the URL associated with the current document in a web browser."
+  (interactive)
    (unless polymacs-mode
-     (user-error "This command is only available when `polymacs-mode` is active")))
-  (browse-url (polymacs-resource-url polymacs--last-document)))
+     (user-error "This command is only available when `polymacs-mode` is active."))
+  (if polymacs--last-document
+      (browse-url (polymacs-resource-url polymacs--last-document))
+    (message "Not in a resource buffer.")))
+
+(provide 'polymacs)

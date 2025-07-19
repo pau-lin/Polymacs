@@ -1,4 +1,4 @@
-;;; polymacs-resource.el --- Resource related code -*- coding: utf-8; lexical-binding: t; -*-
+;;; polymacs-db.el --- Polymacs database API -*- coding: utf-8; lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 P.M
 
@@ -26,14 +26,4 @@
 
 ;;; Code:
 
-(cl-defstruct polymacs-resource
-  title
-  url
-  file-path)
-
-(defun polymacs-register-resource ()
-  "Register selected buffer as resource-file : add it to the db and gain access to polymacs functionnalities"
-  (interactive)
-  (write-file (polymacs-resource-file-path polymacs--last-document)))
-
-(provide 'polymacs-resource)
+(provide 'polymacs-db)
