@@ -69,7 +69,7 @@
   (interactive)
   (let ((url (or (org-element-property :raw-link (org-element-context))
                  (thing-at-point 'url))))
-    (if (and url (string-match-p "^http?://" url))
+    (if (and url (string-match-p "^https?://" url))
       (polymacs-html-to-org url)
       (message "No valid link at point."))))
 
@@ -110,10 +110,29 @@
       (deactivate-mark)
       (polymacs--remove-empty-org-targets)
       (polymacs--align-all-org-tables)
+      (polymacs--fix-org-duplicate-http-links)
+      (polymacs--remove-caption-string)
       (switch-to-buffer (current-buffer)))
       (org-mode))))
 
 ;;;; Tool parsing functions
+(defun polymacs--remove-caption-string ()
+  "Remove '#+caption' string in resource buffer to correctly display org links"
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward "^#\\+caption: " nil t)
+      (replace-match ""))))
+
+(defun polymacs--fix-org-duplicate-http-links ()
+  "Replace Org links like [[http...][http...]] with a single [[http...]] using the second URL."
+  (save-excursion
+    (goto-char (point-min))
+        (while (re-search-forward
+            "\\[\\[\\(https?://[^]]+\\)\\]\\[\\[\\[\\(https?://[^]]+\\)\\]\\]\\]\\]" nil t)
+      (let ((url1 (match-string 1))
+            (url2 (match-string 2)))
+        (replace-match (format "[[%s]]" url2) t t)))))
+
 (defun polymacs--extract-html-title (html)
   "Extract html title from a html string."
     (when (string-match "<title>\\(.*?\\)</title>" html)
