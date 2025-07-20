@@ -4,6 +4,7 @@ Polymacs is a SuperMemo-inspired Emacs package intended for self-learners. [Supe
 Polymacs aims to be fast, scalable, future-proof, and modular, providing a robust open-source solution for self-taught learners, adaptable to their individual needs.
 
 ## Installation
+This package isn’t available on MELPA yet, so both it and its dependencies need to be installed manually.
 ### Required
 - Clone this github repo and add to your init file (default to ~/.emacs.d/init.el or .config/emacs/init.el) :
 ```
@@ -52,7 +53,7 @@ For now, we rely on Python and other external tools to implement certain feature
 This project is also, for me, a way to discover Lisp and Emacs Lisp in a very hands-on way — making mistakes, approximations, and plenty of misconceptions.  
 Reassuring, isn’t it?
 
-## Road-map and contributions
+### Road-map and contributions
 If you want to contribute to the project (which would be awesome!), feel free to check out the [Roadmap](./doc/ROADMAP.md) and pick a feature you'd like to see implemented.
 
 You're also very welcome to work on other aspects of the project — improvements, ideas, bug fixes, documentation — anything that feels meaningful to you!

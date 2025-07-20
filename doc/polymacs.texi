@@ -1,0 +1,39 @@
+\input texinfo    @c -*- texinfo -*-
+@c %**start of header
+@setfilename polymacs.info
+@settitle Polymacs User Manual
+@documentencoding UTF-8
+@documentlanguage en
+@c %**end of header
+
+@copying
+@quotation
+Copyright (C) 2025 paul-in <paul-in@@mailo.com>
+
+You can redistribute this document and/or modify it under the terms
+of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+This document is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE@.  See the GNU
+General Public License for more details.
+
+@end quotation
+@end copying
+
+@dircategory Emacs
+@direntry
+* Polymacs: (polymacs). Incremental learning for self-study.
+@end direntry
+
+@finalout
+@titlepage
+@title Polymacs User Manual
+@subtitle for version 0.1
+@author pau-lin
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
