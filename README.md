@@ -3,13 +3,6 @@ Polymacs is a SuperMemo-inspired Emacs package intended for self-learners. [Supe
 
 Polymacs aims to be fast, scalable, future-proof, and modular, providing a robust open-source solution for self-taught learners, adaptable to their individual needs.
 
-## Current state
-The package is currently in an totally unstable and incomplete state, with core functionalities still under development.
-For now, we rely on Python and other external tools to implement certain features more easily, with the goal of replacing them later with pure Emacs Lisp.
-
-This project is also, for me, a way to discover Lisp and Emacs Lisp in a very hands-on way — making mistakes, approximations, and plenty of misconceptions.  
-Reassuring, isn’t it?
-
 ## Installation
 ### Required
 - Clone this github repo and add to your init file (default to ~/.emacs.d/init.el or .config/emacs/init.el) :
@@ -47,6 +40,24 @@ Then you can use M-x "org-toggle-inline-images" to show them.<br>
 It will quite noticeably slow down loading of an org-bfile containing remote images
 
 I plan to include this feature by default in Polymacs.
-## Config
+## Configuration
 To set the path to the resources-directory (directory in which we save learning materials like web-pages converted to org-mode): (setq polymacs-resource-folder "~/polymacs-resources/")<br>
 Default is ~/polymacs-resources, you will be asked to create it when saving your first resource.
+
+## About this project
+### Current state
+The package is currently in an totally unstable and incomplete state, with core functionalities still under development.
+For now, we rely on Python and other external tools to implement certain features more easily, with the goal of replacing them later with pure Emacs Lisp.
+
+This project is also, for me, a way to discover Lisp and Emacs Lisp in a very hands-on way — making mistakes, approximations, and plenty of misconceptions.  
+Reassuring, isn’t it?
+
+## Road-map and contributions
+If you want to contribute to the project (which would be awesome!), feel free to check out the [Roadmap](./doc/ROADMAP.md) and pick a feature you'd like to see implemented.
+
+You're also very welcome to work on other aspects of the project — improvements, ideas, bug fixes, documentation — anything that feels meaningful to you!
+
+If you'd like to see your changes included in the project, please make sure they align with the project's philosophy, which is also described in the same document. Thanks a lot!
+
+### Acknowledgments
+
