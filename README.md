@@ -1,7 +1,7 @@
 # Polymacs
 Polymacs is a SuperMemo-inspired Emacs package intended for self-learners. [SuperMemo](https://www.super-memory.com/) is a learning method and software developed by Piotr Woźniak since 1985, which has introduced and implemented many techniques for lifelong and autodidactic learners, such as [incremental learning](https://super-memory.com/help/il.htm) and [spaced repetition](https://supermemo.guru/wiki/Spaced_repetition). I plan to adapt these techniques into the Emacs environment, taking advantage of its rich ecosystem.
 
-Polymacs aims to be fast, scalable, future-proof, and modular, providing a robust open-source solution for self-taught learners, adaptable to their individual needs.
+Polymacs aims to be fast, scalable, future-proof, and modular, providing a robust open-source and adaptable solution for self-taught learners.
 
 ## Installation
 This package isn’t available on MELPA yet, so both it and its dependencies need to be installed manually.
@@ -72,12 +72,13 @@ If you'd like to see your changes included in the project, please make sure they
 - [ ] "Extract" IR functionality
 - [ ] Define/find the delimiters used by Polymacs
 
-# For v0.3 (if POC in v0.1 worked)
+## For v0.3 (if POC in v0.1 worked)
 - [ ] Git databse rebuild system
 - [ ] Git context viewing
 
 ## For v0.X
 - [ ] Basic adjustable priority queue
+- [ ] Native inline images support
 
 ## For v1.0 (usable package)
 - [ ] Native Elisp HTML-to-Org parser
