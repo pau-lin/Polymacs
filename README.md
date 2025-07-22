@@ -4,14 +4,15 @@ Polymacs is a SuperMemo-inspired Emacs package intended for self-learners. [Supe
 Polymacs aims to be fast, scalable, future-proof, and modular, providing a robust open-source and adaptable solution for self-taught learners.
 
 ## Installation
-### Required
-- Python3 and Pandoc must be installed on your system.
-- Add to your init file (default location: ~/emacs.d/init.el or ~/.config/emacs) : 
+- Python3 and Pandoc must be installed on your system. (and at the moment it also requires org-roam package, only using his slugify fonction)
+- Add to your init file (default location: ~/emacs.d/init.el or ~/.config/emacs/init.el) : 
 ```
 (use-package polymacs
   :vc (:url "https://github.com/paul-in/polymacs.git" :rev "HEAD")
   :ensure t
   :defer t)
+  
+(require 'polymacs)
 ```
 - Refresh your config (M-x "load-file" init.el) and run M-x "polymacs-install" (you can then leave the install output buffer with q or C-x k RET)
 
@@ -21,8 +22,11 @@ Polymacs aims to be fast, scalable, future-proof, and modular, providing a robus
 - Else, you need to create a python venv named env in "~/.config/emacs/elpa/polymacs" (`./env/bin/python3 -m venv env`) and install BeautifulSoup4 (`pip install beautifulsoup4`).
 - Make sure Pandoc is installed on your system and added to your PATH so Emacs can find it.
 
-### Optional
-#### Display remote inline images
+## Configuration
+To set the path to the resources-directory (directory in which we save learning materials like web-pages converted to org-mode): (setq polymacs-resource-folder "~/polymacs-resources/")<br>
+Default is ~/polymacs-resources, you will be asked to create it when saving your first resource.
+
+### Display remote inline images
 To allow remote images to be shown in the resource buffer, you need to install [Org-yt](https://github.com/TobiasZawada/org-yt?tab=readme-ov-file) and add in your init file :
 ```
 (setq org-display-remote-inline-images 'cache)
@@ -46,9 +50,6 @@ Then you can use M-x "org-toggle-inline-images" to show them.<br>
 It will quite noticeably slow down loading of an org-bfile containing remote images
 
 I plan to include this feature by default in Polymacs.
-## Configuration
-To set the path to the resources-directory (directory in which we save learning materials like web-pages converted to org-mode): (setq polymacs-resource-folder "~/polymacs-resources/")<br>
-Default is ~/polymacs-resources, you will be asked to create it when saving your first resource.
 
 ## About this project
 ### Current state
@@ -91,14 +92,19 @@ If you'd like to see your changes included in the project, please make sure they
 - [ ] Implement FSRS in Elisp
 - [ ] Basic Incremental Reading functionalities (extract, split, dismiss, suspend, ignore, postpone)
 - [ ] Minor mode to hide Polymacs snippets
+- [ ] Add doc for existing functionnalities (.texi and online manual (polymacs.org?))
+- [ ] Publish on MELPA
+
+## For V1.X
+- [ ] Ultra-beginner guide on how to use Polymacs on Windows, with no prior Emacs or Linux knowledge
 
 # Project's philosophy 
 ## Future-Proof
-Polymacs is designed to be as future-proof as possible, while maintaining a minimalist UI. It offloads data persistence to a SQLite3 database, natively supported since Emacs 29.1, and a Git-based reconstruction method in case the database is lost<br>
+Polymacs is designed to be as future-proof as possible, while maintaining a minimalist UI. It offloads data persistence to a SQLite3 database, natively supported since Emacs 29.1, and a Git-based reconstruction method in case the database is lost.<br>
 This philosophy stems from a harsh truth: Polymacs — and even Emacs — can become obsolete, but the knowledge, especially structured learning data, must endure.<br>
 Therefore, Polymacs relies as much as possible on two elements:
 - Emacs-native features 
-- Robust, well-documented, and actively maintained packages and projects
+- Robust, well-documented, and actively maintained packages and projects<br>
 This commitment ensures long-term durability and reduces technical debt.
 
 ## Accessibility

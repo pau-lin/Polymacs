@@ -1,4 +1,4 @@
-;;; polymacs-resource.el --- Resource related code -*- coding: utf-8; lexical-binding: t; -*-
+;;; polymacs-mode.el --- Major mode for special Polymacs buffer -*- coding: utf-8; lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 P.M
 
@@ -26,14 +26,20 @@
 
 ;;; Code:
 
-(cl-defstruct polymacs-resource
-  title
-  url
-  file-path)
+(defvar polymacs-resources-directory)
 
-(defun polymacs-register-resource ()
-  "Register selected buffer as resource-file : add it to the db and gain access to polymacs functionnalities"
-  (interactive)
-  (write-file (polymacs-resource-file-path polymacs--last-document)))
+(define-minor-mode polymacs-mode
+  "Mode mineur pour activer les fonctions Polymacs spécifiques."
+  :lighter " Poly")
 
-(provide 'polymacs-resource)
+(defun polymacs--maybe-enable-mode ()
+  "Active `polymacs-mode` si le fichier courant est dans
+`polymacs-resource-folder`."
+  (when (and buffer-file-name
+             (string-prefix-p (expand-file-name polymacs-resources-directory)
+                              (expand-file-name buffer-file-name)))
+    (polymacs-mode 1)))
+
+(add-hook 'find-file-hook #'polymacs--maybe-enable-mode)
+
+(provide 'polymacs-mode)

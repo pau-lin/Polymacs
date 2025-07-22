@@ -31,7 +31,7 @@
 ;; and autodidactic learners, such as incremental learning and spaced
 ;; repetition. We have adapted some of these techniques into the Emacs
 ;; environment, taking advantage of its rich ecosystem.
-;;
+;
 ;; Polymacs aims to be fast, scalable, future-proof, and modular,
 ;; providing a robust open-source solution for self-taught learners,
 ;; adaptable to their individual needs.
@@ -40,6 +40,8 @@
 
 (require 'polymacs-resource)
 (require 'polymacs-mode)
+(require 'org)
+(require 'org-roam) ;; Temporary import!
 
 ;;; Options
 (defgroup polymacs nil
@@ -58,23 +60,26 @@
   (file-name-directory (or load-file-name buffer-file-name))
   "Path to Polymacs source code.")
 
+(defvar polymacs--last-document nil
+  "Holds the last document used by polymacs.")
+
 ;;; Installation
 (defun polymacs-install ()
-  "Install dependencies of polymacs when installed from version control."
+  "Install dependencies of polymacs when installed from version
+control."
   (interactive)
-  (let* ((default-directory (file-name-directory (or load-file-name buffer-file-name)))
+  (let* ((default-directory polymacs-pkg-directory)
          (script-path (expand-file-name
                        (if (eq system-type 'windows-nt)
-                           "../scripts/install.ps1"
-                         "../scripts/install.sh")
+                           "scripts/install.ps1"
+                         "scripts/install.sh")
                        default-directory)))
     (if (file-exists-p script-path)
-        (if (eq system-type 'windows-nt)
-            ;; Windows: use PowerShell to run install.ps1
-            (shell-command (concat "powershell -ExecutionPolicy Bypass -File "
-                                   (shell-quote-argument script-path)))
-          ;; Unix: run the shell script
-          (shell-command (concat "bash " (shell-quote-argument script-path))))
+        (shell-command
+         (if (eq system-type 'windows-nt)
+             (concat "powershell -ExecutionPolicy Bypass -File "
+                     (shell-quote-argument script-path))
+           (concat "bash " (shell-quote-argument script-path))))
       (message "Install script not found: %s" script-path))))
 
 ;;; Parsing functions
@@ -92,7 +97,7 @@
       (polymacs-html-to-org url)
       (message "No valid link at point."))))
 
-(defun polymacs-html-to-org--callback (status url)
+(defun polymacs-html-to-org--callback (_status url)
   (goto-char (point-min))
   (re-search-forward "^$" nil 'move) ;; Remove headers
   (forward-char)
@@ -111,8 +116,8 @@
       (with-current-buffer html-buffer
 	(insert html)
       (if (string-match-p "wikipedia.org" url)
-	  (call-process-region (point-min) (point-max) (expand-file-name "../env/bin/python3" polymacs-pkg-directory) nil bs4-buffer nil (expand-file-name "../scripts/parse_bs4_wiki.py" polymacs-pkg-directory) url)
-	  (call-process-region (point-min) (point-max) (expand-file-name "../env/bin/python3" polymacs-pkg-directory) nil bs4-buffer nil (expand-file-name "../scripts/parse_bs4.py" polymacs-pkg-directory) url))
+	  (call-process-region (point-min) (point-max) (expand-file-name "env/bin/python3" polymacs-pkg-directory) nil bs4-buffer nil (expand-file-name "scripts/parse_bs4_wiki.py" polymacs-pkg-directory) url)
+	  (call-process-region (point-min) (point-max) (expand-file-name "env/bin/python3" polymacs-pkg-directory) nil bs4-buffer nil (expand-file-name "scripts/parse_bs4.py" polymacs-pkg-directory) url))
       (kill-buffer html-buffer))
     (with-current-buffer bs4-buffer
       (call-process-region (point-min) (point-max) "pandoc" nil org-buffer nil "--wrap=none" "-f" "html" "-t" "org")
@@ -158,26 +163,29 @@
         (replace-match (format "[[%s][(%s)]]" url num) t t)))))
 
 (defun polymacs--remove-nbsp ()
-  "Remove all NO-BREAK SPACE (U+00A0) characters from the current buffer."
+  "Remove all NO-BREAK SPACE (U+00A0) characters from the current
+buffer."
   (save-excursion
     (goto-char (point-min))
     (while (search-forward "\u00A0" nil t)
       (replace-match " "))))
 
 (defun polymacs--remove-caption-string ()
-  "Remove '#+caption' string in resource buffer to correctly display org links"
+  "Remove '#+caption' string in resource buffer to correctly display
+org links"
   (save-excursion
     (goto-char (point-min))
     (while (re-search-forward "^#\\+caption: " nil t)
       (replace-match ""))))
 
 (defun polymacs--fix-org-duplicate-http-links ()
-  "Replace Org links like [[http...][http...]] with a single [[http...]] using the second URL."
+  "Replace Org links like [[http...][http...]] with a single
+[[http...]] using the second URL."
   (save-excursion
     (goto-char (point-min))
-        (while (re-search-forward
+    (while (re-search-forward
             "\\[\\[\\(https?://[^]]+\\)\\]\\[\\[\\[\\(https?://[^]]+\\)\\]\\]\\]\\]" nil t)
-      (let ((url1 (match-string 1))
+      (let ((_url1 (match-string 1))
             (url2 (match-string 2)))
         (replace-match (format "[[%s][image]]" url2) t t)))))
 
@@ -188,7 +196,8 @@
       (string-trim raw-title))))
 
 (defun polymacs--region-contains-non-top-level-headings-p ()
-  "Return t if marked region contains org headings but not of level 1."
+  "Return t if marked region contains org headings but not of level
+1."
   (if (use-region-p)
       (save-excursion
         (let ((start (region-beginning))
@@ -231,10 +240,11 @@
 
 ;;; Navigation
 (defun polymacs-browse-current-buffer ()
-  "Open the URL associated with the current document in a web browser."
+  "Open the URL associated with the current document in a web
+browser."
   (interactive)
-   (unless polymacs-mode
-     (user-error "This command is only available when `polymacs-mode` is active."))
+  (unless polymacs-mode
+    (user-error "This command is only available when `polymacs-mode` is active."))
   (if polymacs--last-document
       (browse-url (polymacs-resource-url polymacs--last-document))
     (message "Not in a resource buffer.")))
