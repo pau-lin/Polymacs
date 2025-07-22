@@ -58,6 +58,25 @@
   (file-name-directory (or load-file-name buffer-file-name))
   "Path to Polymacs source code.")
 
+;;; Installation
+(defun polymacs-install ()
+  "Install dependencies of polymacs when installed from version control."
+  (interactive)
+  (let* ((default-directory (file-name-directory (or load-file-name buffer-file-name)))
+         (script-path (expand-file-name
+                       (if (eq system-type 'windows-nt)
+                           "../scripts/install.ps1"
+                         "../scripts/install.sh")
+                       default-directory)))
+    (if (file-exists-p script-path)
+        (if (eq system-type 'windows-nt)
+            ;; Windows: use PowerShell to run install.ps1
+            (shell-command (concat "powershell -ExecutionPolicy Bypass -File "
+                                   (shell-quote-argument script-path)))
+          ;; Unix: run the shell script
+          (shell-command (concat "bash " (shell-quote-argument script-path))))
+      (message "Install script not found: %s" script-path))))
+
 ;;; Parsing functions
 (defun polymacs-html-to-org (url)
   "Parse a html page to org format."

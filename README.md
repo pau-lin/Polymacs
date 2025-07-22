@@ -4,17 +4,22 @@ Polymacs is a SuperMemo-inspired Emacs package intended for self-learners. [Supe
 Polymacs aims to be fast, scalable, future-proof, and modular, providing a robust open-source and adaptable solution for self-taught learners.
 
 ## Installation
-This package isn’t available on MELPA yet, so both it and its dependencies need to be installed manually.
 ### Required
-- Clone this github repo and add to your init file (default to ~/.emacs.d/init.el or .config/emacs/init.el) :
+- Python3 and Pandoc must be installed on your system.
+- Add to your init file (default location: ~/emacs.d/init.el or ~/.config/emacs) : 
 ```
-(add-to-list 'load-path "path-to-polymacs-pkg/lisp/")
-(require 'polymacs)
+(use-package polymacs
+  :vc (:url "https://github.com/paul-in/polymacs.git" :rev "HEAD")
+  :ensure t
+  :defer t)
 ```
+- Refresh your config (M-x "load-file" init.el) and run M-x "polymacs-install" (you can then leave the install output buffer with q or C-x k RET)
 
-- You need to create a python venv named env in "path-to-polymacs-pkg" (`python -m venv env`) and install BeautifulSoup4 (`pip install beautifulsoup4`).
+#### If it doesn't install automatically:
+- Try running the install script manually: "~/.config/emacs/elpa/polymacs/scripts/install.sh" manually (or path/install.ps1 if on windows)
 
-- Install pandoc on your system
+- Else, you need to create a python venv named env in "~/.config/emacs/elpa/polymacs" (`./env/bin/python3 -m venv env`) and install BeautifulSoup4 (`pip install beautifulsoup4`).
+- Make sure Pandoc is installed on your system and added to your PATH so Emacs can find it.
 
 ### Optional
 #### Display remote inline images
@@ -60,7 +65,7 @@ You're also very welcome to work on other aspects of the project — improvement
 
 If you'd like to see your changes included in the project, please make sure they align with the project's philosophy, which is described in the project's philosophy section. Thanks a lot!
 
-# Polymacs Road-Map
+# Road-Map
 ## For v0.1
 - [ ] Proof of concept: using Git to view context in IR
 - [ ] Proof of concept: using Git as a source of truth to rebuild the database
@@ -88,7 +93,6 @@ If you'd like to see your changes included in the project, please make sure they
 - [ ] Minor mode to hide Polymacs snippets
 
 # Project's philosophy 
-### Accessibility · Future-Proofing · Efficiency · Integration & Customization
 ## Future-Proof
 Polymacs is designed to be as future-proof as possible, while maintaining a minimalist UI. It offloads data persistence to a SQLite3 database, natively supported since Emacs 29.1, and a Git-based reconstruction method in case the database is lost<br>
 This philosophy stems from a harsh truth: Polymacs — and even Emacs — can become obsolete, but the knowledge, especially structured learning data, must endure.<br>
