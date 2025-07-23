@@ -17,7 +17,7 @@ This creates a few obstacles:
 3. It requires a way to save commit hashes associated with specific extract creation/modification to quickly return to a past snapshot. SQLite can handle this.
 4. There is a limitation in cascading context modifications if children have been modified: if a user created and modified an extract and now wants to change something from the context element, this can’t easily propagate to children, as it will result in a conflict.
 
-Example showing the general principle of this approach:
+Example showing the general principle of this approach (The extracted section is here shown with #+begin_x| and #+end_x|) :
 
 ![example](./images/example_context_modif1.png) 
 ![example](./images/example_context_modif2.png)
