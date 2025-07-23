@@ -1,5 +1,5 @@
 # Polymacs
-Polymacs is a SuperMemo-inspired Emacs package intended for self-learners. [SuperMemo](https://www.super-memory.com/) is a learning method and software developed by Piotr Woźniak since 1985, which has introduced and implemented many techniques for lifelong and autodidactic learners, such as [incremental learning](https://super-memory.com/help/il.htm) and [spaced repetition](https://supermemo.guru/wiki/Spaced_repetition). I plan to adapt these techniques into the Emacs environment, taking advantage of its rich ecosystem.
+Polymacs is a SuperMemo-inspired Emacs package intended for self-learners. [SuperMemo](https://www.super-memory.com/) is a learning method and software developed by Piotr Woźniak since 1985, which has introduced and implemented many techniques for lifelong and autodidactic learners, such as [incremental learning](https://super-memory.com/help/il.htm) and [spaced repetition](https://supermemo.guru/wiki/Spaced_repetition). I plan to adapt these techniques into the nEmacs environment, taking advantage of its rich ecosystem.
 
 Polymacs aims to be fast, scalable, future-proof, and modular, providing a robust open-source and adaptable solution for self-taught learners.
 
@@ -67,20 +67,23 @@ You're also very welcome to work on other aspects of the project — improvement
 If you'd like to see your changes included in the project, please make sure they align with the project's philosophy, which is described in the project's philosophy section. Thanks a lot!
 
 # Road-Map
+(See [Terminology](./doc/terminology.md)) if any terms seem obscure)
 ## For v0.1
-- [ ] Proof of concept: using Git to view context in IR
+- [x] Proof of concept: using Git to view context in IR ([POC file](./doc/git-context-poc.md))
 - [ ] Proof of concept: using Git as a source of truth to rebuild the database
 
 ## For v0.2
 - [ ] Draft HTML-to-Org parser (using external tools for now)
 - [ ] Basic SQLite database management
 - [ ] Basic review system (just cloze cards) with a temporary draft SRS algorithm
-- [ ] "Extract" IR functionality
+- [ ] "Extract" IR functionality for headings only
 - [ ] Define/find the delimiters used by Polymacs
 
 ## For v0.3 (if POC in v0.1 worked)
 - [ ] Git databse rebuild system
 - [ ] Git context viewing
+- [ ] Add extract functionality for #+block_
+- [ ] Add view tree to navigate through topics tree
 
 ## For v0.X
 - [ ] Basic adjustable priority queue
@@ -97,6 +100,8 @@ If you'd like to see your changes included in the project, please make sure they
 
 ## For V1.X
 - [ ] Ultra-beginner guide on how to use Polymacs on Windows, with no prior Emacs or Linux knowledge
+- [ ] Add inline block support
+- [ ] Add heading cluster block support
 
 # Project's philosophy 
 ## Future-Proof
