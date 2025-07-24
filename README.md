@@ -75,7 +75,7 @@ If you'd like to see your changes included in the project, please make sure they
 ## Road-Map
 (Check [Terminology](./doc/terminology.md) if any term seems obscure)
 ### For v0.1
-- [ ] **In Progress:** Proof of concept: using Git to view context in IR ([POC file in construction](./doc/git-context-poc.md))
+- [x] Proof of concept: using Git to view context in IR ([POC file](./doc/git-context-poc.md))
 
 ### For v0.2
 - [x] Draft HTML-to-Org parser (using external tools for now)
