@@ -26,7 +26,7 @@
 
 ;;; Code:
 
-(defvar polymacs-resources-directory)
+(require 'polymacs)
 
 (define-minor-mode polymacs-mode
   "Mode mineur pour activer les fonctions Polymacs spécifiques."
