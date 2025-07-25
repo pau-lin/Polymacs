@@ -91,20 +91,30 @@ control."
       (if (org-element-property :ID org-data nil)
 	  t))))
 
+(defun polymacs--get-title (file)
+  "Return non-nil if the file has an ID property at the top, nil otherwise."
+   (with-temp-buffer 
+    (insert-file-contents (expand-file-name file polymacs-resources-directory))
+    (org-get-title)))
+
 (defun polymacs-list-files ()
-  "Return a list of all Polymacs files under `Polymacs-resources-directory'. with valid UUID"
+  "Return a list of (title . filename) pairs for valid Polymacs files with UUIDs."
   (let (files)
-  (dolist (file (directory-files polymacs-resources-directory))
-    (unless (or (string= file ".") (string= file ".."))
-      (when (polymacs--file-id-p file)
-	(push file files))))
-  files))
+    (dolist (file (directory-files polymacs-resources-directory))
+      (unless (member file '("." ".."))
+        (when (polymacs--file-id-p file)
+          (let ((title (polymacs--get-title file)))
+            (push (cons (or title file) file) files)))))
+    files))
 
 (defun polymacs-find ()
-  "Find a polymacs file by name"
+  "Find a Polymacs file by its title and open it."
   (interactive)
-  (let ((file (completing-read "File: " (polymacs-list-files))))
-    (find-file (expand-file-name file polymacs-resources-directory))))
+  (let* ((files (polymacs-list-files))  
+         (title (completing-read "File: " (mapcar #'car files)))
+         (file (cdr (assoc title files)))) 
+    (when file
+      (find-file (expand-file-name file polymacs-resources-directory)))))
 
 ;;; Navigation
 (defun polymacs-browse-current-buffer ()
