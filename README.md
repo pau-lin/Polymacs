@@ -78,14 +78,14 @@ If you'd like to see your changes included in the project, please make sure they
 - [x] Proof of concept: using Git to build contexts and extracts in IR ([POC file](./doc/git-context-poc.md))
 
 ### For v0.2
+- [ ] File handling
 - [x] Draft HTML-to-Org parser (using external tools for now)
-- [ ] Basic SQLite database management
 - [ ] Basic review system (just cloze cards) with a temporary draft SRS algorithm
 - [ ] "Extract" IR functionality for headings only
 - [ ] Define/find the delimiters used by Polymacs
 
 ### For v0.3 
-- [ ] Git context viewing (Implementation of POC from v0.1)
+- [ ] Git building viewing (Implementation of POC from v0.1)
 - [ ] Add extract functionality for arbitrary area
 - [ ] Add view tree to navigate through topics tree
 
