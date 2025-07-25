@@ -50,7 +50,7 @@
   :prefix "polymacs-"
   :link '(url-link :tag "Github" "https://github.com/pau-lin/polymacs"))
 
-(defcustom polymacs-resources-directory (expand-file-name "~/polymacs-resources/" org-directory)
+(defcustom polymacs-resources-directory (expand-file-name "polymacs-resources/" org-directory)
   "Path to directory containing polymacs resource files."
   :type 'directory
   :group 'polymacs)
@@ -63,7 +63,7 @@
 (defvar polymacs--last-document nil
   "Holds the last document used by polymacs.")
 
-;;; Installation
+;;; Library
 (defun polymacs-install ()
   "Install dependencies of polymacs when installed from version
 control."
@@ -81,6 +81,30 @@ control."
                      (shell-quote-argument script-path))
            (concat "bash " (shell-quote-argument script-path))))
       (message "Install script not found: %s" script-path))))
+
+
+(defun polymacs--file-id-p (file)
+  "Return non-nil if the file has an ID property at the top, nil otherwise."
+   (with-temp-buffer 
+    (insert-file-contents (expand-file-name file polymacs-resources-directory))
+    (let ((org-data (org-element-parse-buffer 'headline)))
+      (if (org-element-property :ID org-data nil)
+	  t))))
+
+(defun polymacs-list-files ()
+  "Return a list of all Polymacs files under `Polymacs-resources-directory'. with valid UUID"
+  (let (files)
+  (dolist (file (directory-files polymacs-resources-directory))
+    (unless (or (string= file ".") (string= file ".."))
+      (when (polymacs--file-id-p file)
+	(push file files))))
+  files))
+
+(defun polymacs-find ()
+  "Find a polymacs file by name"
+  (interactive)
+  (let ((file (completing-read "File: " (polymacs-list-files))))
+    (find-file (expand-file-name file polymacs-resources-directory))))
 
 ;;; Navigation
 (defun polymacs-browse-current-buffer ()

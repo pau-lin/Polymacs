@@ -76,10 +76,10 @@ If you'd like to see your changes included in the project, please make sure they
 (Check [Terminology](./doc/terminology.md) if any term seems obscure)
 ### For v0.1
 - [x] Proof of concept: using Git to build contexts and extracts in IR ([POC file](./doc/git-context-poc.md))
-
-### For v0.2
-- [ ] File handling
 - [x] Draft HTML-to-Org parser (using external tools for now)
+- [ ] **In progress** Basic File handling
+
+### For v0.2 (ultra basic review and IR)
 - [ ] Basic review system (just cloze cards) with a temporary draft SRS algorithm
 - [ ] "Extract" IR functionality for headings only
 - [ ] Define/find the delimiters used by Polymacs

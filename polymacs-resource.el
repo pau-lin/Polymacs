@@ -37,6 +37,9 @@
   "Register selected buffer as resource-file : add it to the db and
 gain access to polymacs functionnalities"
   (interactive)
-  (write-file (polymacs-resource-file-path polymacs--last-document)))
+  (let ((file (polymacs-resource-file-path polymacs--last-document)))
+    (write-file file)
+    (find-file file)
+    (org-id-get-create)))
 
 (provide 'polymacs-resource)
