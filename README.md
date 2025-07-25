@@ -5,12 +5,12 @@
 
 <hr>
 
-Polymacs is a SuperMemo-inspired Emacs package intended for self-learners. [SuperMemo](https://www.super-memory.com/) is a learning method and software developed by Piotr Woźniak since 1985, which has introduced and implemented many techniques for lifelong and autodidactic learners, such as [incremental learning](https://super-memory.com/help/il.htm) and [spaced repetition](https://supermemo.guru/wiki/Spaced_repetition). I plan to adapt these techniques into the nEmacs environment, taking advantage of its rich ecosystem.
+Polymacs is a SuperMemo-inspired Emacs package intended for self-learners. [SuperMemo](https://www.super-memory.com/) is a learning method and software developed by Piotr Woźniak since 1985, which has introduced and implemented many techniques for lifelong and autodidactic learners, such as [incremental learning](https://super-memory.com/help/il.htm) and [spaced repetition](https://supermemo.guru/wiki/Spaced_repetition). I plan to adapt these techniques into the Emacs environment, taking advantage of its rich ecosystem.
 
 Polymacs aims to be fast, scalable, future-proof, and modular, providing a robust open-source and adaptable solution for self-taught learners.
 
 ## Installation
-- Python3 and Pandoc must be installed on your system. (and at the moment it also requires org-roam package, only using his slugify fonction)
+- Python3 and Pandoc must be installed on your system.
 - Add to your init file (default location: ~/emacs.d/init.el or ~/.config/emacs/init.el) : 
 ```
 (use-package polymacs
@@ -76,10 +76,10 @@ If you'd like to see your changes included in the project, please make sure they
 (Check [Terminology](./doc/terminology.md) if any term seems obscure)
 ### For v0.1
 - [x] Proof of concept: using Git to build contexts and extracts in IR ([POC file](./doc/git-context-poc.md))
-
-### For v0.2
-- [ ] File handling
 - [x] Draft HTML-to-Org parser (using external tools for now)
+- [ ] **In progress** Basic File handling
+
+### For v0.2 (ultra basic review and IR)
 - [ ] Basic review system (just cloze cards) with a temporary draft SRS algorithm
 - [ ] "Extract" IR functionality for headings only
 - [ ] Define/find the delimiters used by Polymacs
