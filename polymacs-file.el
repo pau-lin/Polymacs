@@ -92,11 +92,12 @@
 	(bs4-buffer "*bs4*")
 	(org-buffer (get-buffer-create "*polymacs-org*"))
         (html (buffer-substring-no-properties (point) (point-max)))
-        (title (polymacs-slugify (polymacs--extract-html-title html)))
+        (title (polymacs--extract-html-title html))
+	(slug (polymacs-slugify title))
 	(doc (make-polymacs-resource
               :title title
               :url url
-              :file-path (concat polymacs-resources-directory (format-time-string "%Y%m%d%H%M%S-") title".org"))))
+              :file-path (concat polymacs-resources-directory (format-time-string "%Y%m%d%H%M%S-") slug".org"))))
 	 (setq polymacs--last-document doc)
       (with-current-buffer org-buffer
 	(erase-buffer))
@@ -126,8 +127,13 @@
       (polymacs--clean-org-superscript)
       (polymacs--fix-ref-link)
       (polymacs--align-all-org-tables)
-      (switch-to-buffer (current-buffer)))
-      (org-mode))))
+      (switch-to-buffer (current-buffer))
+      (org-open-line 2)
+      (insert (concat "#+title: " title))
+      (forward-line 1)
+      (insert (concat "#+url: " url))
+      (newline)
+      (org-mode)))))
 
 ;;;; Tool parsing functions
 (defun polymacs--clean-org-superscript ()
@@ -178,9 +184,13 @@ org links"
 
 (defun polymacs--extract-html-title (html)
   "Extract html title from a html string."
-    (when (string-match "<title>\\(.*?\\)</title>" html)
-    (let ((raw-title (match-string 1 html)))
-      (string-trim raw-title))))
+  (with-temp-buffer
+    (insert html)
+    (set-buffer-file-coding-system 'utf-8)
+    (decode-coding-region (point-min) (point-max) 'utf-8)
+    (when (string-match "<title>\\(.*?\\)</title>" (buffer-string))
+      (let ((raw-title (match-string 1 (buffer-string))))
+        (string-trim raw-title)))))
 
 (defun polymacs--region-contains-non-top-level-headings-p ()
   "Return t if marked region contains org headings but not of level

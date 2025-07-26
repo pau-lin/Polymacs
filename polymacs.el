@@ -101,7 +101,8 @@ control."
   "Return a list of (title . filename) pairs for valid Polymacs files with UUIDs."
   (let (files)
     (dolist (file (directory-files polymacs-resources-directory))
-      (unless (member file '("." ".."))
+      (unless  (or (member file '("." ".."))
+		    (string-prefix-p ".#" file))
         (when (polymacs--file-id-p file)
           (let ((title (polymacs--get-title file)))
             (push (cons (or title file) file) files)))))
