@@ -104,6 +104,7 @@ If you'd like to see your changes included in the project, please make sure they
 
 ### For V1.X
 - [ ] Ultra-beginner guide on how to use Polymacs on Windows, with no prior Emacs or Linux knowledge
+- [ ] Export options with a structured tree view
 
 ## Philosophy 
 ### Future-Proof
