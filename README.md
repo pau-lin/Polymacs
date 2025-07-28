@@ -1,5 +1,5 @@
 # Polymacs
-**/!\ This package is not in a usable state yet! /!\\**
+**/!\ This package is not in a usable state yet! Please save your data before using it. /!\\**
 
 [Installation](#Installation) | [Configuration](#Configuration) | [About this project](#About-this-project) | [Road-Map](#Road-Map) | [Philosophy](#Philosophy)
 
