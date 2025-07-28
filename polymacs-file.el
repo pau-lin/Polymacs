@@ -276,6 +276,10 @@ org links"
       (if (org-element-property :ID org-data nil)
 	  t))))))
 
+(defun polymacs--is-resources-p ()
+  "Return non-nil if current buffer is a polymacs registered buffer"
+  (if (polymacs--file-id-p (buffer-name)) t))
+
 (defun polymacs--get-title (file)
   "Return non-nil if the file has an ID property at the top, nil otherwise."
    (with-temp-buffer 
