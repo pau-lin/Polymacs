@@ -73,27 +73,24 @@ You're also very welcome to work on other aspects of the project — improvement
 If you'd like to see your changes included in the project, please make sure they align with the project's philosophy, which is described in the project's philosophy section. Thanks a lot!
 
 ## Road-Map
-(Check [Terminology](./doc/terminology.md) if any term seems obscure)
-### For v0.1
-- [x] Proof of concept: using Git to build contexts and extracts in IR ([POC file](./doc/git-context-poc.md))
-- [x] Draft HTML-to-Org parser (using external tools for now)
-- [ ] **In progress** Basic File handling
+See the [changelog](./doc/changelog.md) for previous changes. <br>
+Check [Terminology](./doc/terminology.md) if any term seems obscure.
 
-### For v0.2 (ultra basic review and IR)
+### v0.2 (ultra basic review and IR)
 - [ ] Basic review system (just cloze cards) with a temporary draft SRS algorithm
 - [ ] "Extract" IR functionality for headings only
 - [ ] Define/find the delimiters used by Polymacs
 
-### For v0.3 
+### v0.3 
 - [ ] Git building viewing (Implementation of POC from v0.1)
 - [ ] Add extract functionality for arbitrary area
 - [ ] Add view tree to navigate through topics tree
 
-### For v0.X
+### v0.X
 - [ ] Basic adjustable priority queue
 - [ ] Native inline images support
 
-### For v1.0 (usable package)
+### v1.0 (usable package)
 - [ ] Native Elisp HTML-to-Org parser
 - [ ] Database format aligned with an existing open-source standard (e.g., .anki2)
 - [ ] Implement FSRS in Elisp
@@ -102,7 +99,7 @@ If you'd like to see your changes included in the project, please make sure they
 - [ ] Add doc for existing functionnalities (.texi and online manual (polymacs.org?))
 - [ ] Publish on MELPA
 
-### For V1.X
+### v1.X
 - [ ] Ultra-beginner guide on how to use Polymacs on Windows, with no prior Emacs or Linux knowledge
 - [ ] Export options with a structured tree view
 
