@@ -90,15 +90,18 @@
   (forward-char)
     (let* ((html-buffer (generate-new-buffer "*html*"))
 	(bs4-buffer "*bs4*")
-	(org-buffer (get-buffer-create "*polymacs-org*"))
         (html (buffer-substring-no-properties (point) (point-max)))
         (title (polymacs--extract-html-title html))
 	(slug (polymacs-slugify title))
-	(doc (make-polymacs-resource
+	(buffer-name (concat "*polymacs-org-" slug "*"))
+	(org-buffer (get-buffer-create buffer-name))
+	(doc (make-polymacs-new-resource
               :title title
               :url url
+	      :slug slug
+      	      :temp-buffer-name buffer-name
               :file-path (concat polymacs-resources-directory (format-time-string "%Y%m%d%H%M%S-") slug".org"))))
-	 (setq polymacs--last-document doc)
+	 (push doc polymacs--new-resources-cache)
       (with-current-buffer org-buffer
 	(erase-buffer))
       (with-current-buffer html-buffer
@@ -234,5 +237,69 @@ org links"
                 (setq in-table t)))
              (t (setq in-table nil))))
           (forward-line 1))))))
+
+;;; Navigation
+(defun polymacs-browse-current-buffer ()
+  "Open the URL associated with the current document in a web browser."
+  (interactive)
+  (cond
+   ((polymacs--file-id-p (buffer-name))
+    (let* ((ast (org-element-parse-buffer))
+           (keyword (org-element-map ast 'keyword
+                      (lambda (el)
+                        (when (string= (org-element-property :key el) "URL")
+                          el))
+                      nil t))
+           (url (when keyword (org-element-property :value keyword))))
+      (if url
+          (browse-url url)
+        (message "No #+URL: found in the current buffer."))))
+   (polymacs--new-resources-cache
+    (let ((resource (cl-find-if
+                     (lambda (res)
+                       (string= (polymacs-new-resource-temp-buffer-name res)
+                                (buffer-name)))
+                     polymacs--new-resources-cache)))
+      (if resource
+          (browse-url (polymacs-new-resource-url resource))
+        (message "Not in a resource buffer."))))
+   (t
+    (message "Not in a resource buffer."))))
+
+(defun polymacs--file-id-p (file)
+  "Return non-nil if the file has an ID property at the top, nil otherwise."
+  (let ((file-path (expand-file-name file polymacs-resources-directory)))
+    (if (file-exists-p file-path)
+   (with-temp-buffer 
+    (insert-file-contents file-path)
+    (let ((org-data (org-element-parse-buffer 'headline)))
+      (if (org-element-property :ID org-data nil)
+	  t))))))
+
+(defun polymacs--get-title (file)
+  "Return non-nil if the file has an ID property at the top, nil otherwise."
+   (with-temp-buffer 
+    (insert-file-contents (expand-file-name file polymacs-resources-directory))
+    (org-get-title)))
+
+(defun polymacs-list-files ()
+  "Return a list of (title . filename) pairs for valid Polymacs files with UUIDs."
+  (let (files)
+    (dolist (file (directory-files polymacs-resources-directory))
+      (unless  (or (member file '("." ".."))
+		    (string-prefix-p ".#" file))
+        (when (polymacs--file-id-p file)
+          (let ((title (polymacs--get-title file)))
+            (push (cons (or title file) file) files)))))
+    files))
+
+(defun polymacs-find ()
+  "Find a Polymacs file by its title and open it."
+  (interactive)
+  (let* ((files (polymacs-list-files))  
+         (title (completing-read "File: " (mapcar #'car files)))
+         (file (cdr (assoc title files)))) 
+    (when file
+      (find-file (expand-file-name file polymacs-resources-directory)))))
 
 (provide 'polymacs-file)

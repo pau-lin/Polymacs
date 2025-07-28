@@ -26,20 +26,27 @@
 
 ;;; Code:
 
-(defvar polymacs--last-document)
-
-(cl-defstruct polymacs-resource
+(cl-defstruct polymacs-new-resource
   title
   url
+  slug
+  temp-buffer-name
   file-path)
 
 (defun polymacs-register-resource ()
-  "Register selected buffer as resource-file : add it to the db and
-gain access to polymacs functionnalities"
+  "Register the current buffer as a resource file: save it in polymacs-resources-directory
+gain access to polymacs functionalities."
   (interactive)
-  (let ((file (polymacs-resource-file-path polymacs--last-document)))
-    (write-file file)
-    (find-file file)
-    (org-id-get-create)))
+  (let ((resource (cl-find-if
+                   (lambda (res)
+                     (string= (polymacs-new-resource-temp-buffer-name res)
+                              (buffer-name)))
+                   polymacs--new-resources-cache)))
+    (if resource
+        (let ((file-path (polymacs-new-resource-file-path resource)))
+          (write-file file-path)
+          (find-file file-path)
+          (org-id-get-create))
+      (message "Not in a unregistered resource buffer."))))
 
 (provide 'polymacs-resource)
